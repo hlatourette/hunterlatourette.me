@@ -16,16 +16,22 @@ function main() {
     // Define shaders
     const vertexShaderSource = `
         attribute vec4 aVertexPosition;
+        attribute vec4 aVertexColor;
         uniform mat4 uModelViewMatrix;
         uniform mat4 uProjectionMatrix;
+        varying lowp vec4 vColor;
+
         void main() {
             gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+            vColor = aVertexColor;
         }
     `;
 
     const fragmentShaderSource = `
+        varying lowp vec4 vColor;
+
         void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            gl_FragColor = vColor;
         }
     `;
 
@@ -50,11 +56,23 @@ function main() {
 
     // Initialize buffers
     const positionBuffer = gl.createBuffer();
+    const positions = [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0];
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    const positions = [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0]
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    const colorBuffer = gl.createBuffer();
+    const colors = [
+        1.0, 1.0, 1.0, 1.0, 
+        1.0, 0.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 1.0
+    ];
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
     const buffers = {
-        position: positionBuffer
+        position: positionBuffer,
+        color: colorBuffer
     };
 
     // Draw
@@ -63,6 +81,7 @@ function main() {
         shaderProgram,
         {
             vertextPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor")
         },
         {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
@@ -108,21 +127,39 @@ function draw(gl, program, attribLocations, uniformLocations, buffers) {
     
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition atrribute.
-    const numComponents = 2;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
+    const positionBufferNumComponents = 2;
+    const positionBufferType = gl.FLOAT;
+    const positionBufferNormalize = false;
+    const positionBufferStride = 0;
+    const positionBufferOffset = 0;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
     gl.vertexAttribPointer(
         attribLocations.vertexPosition,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset
+        positionBufferNumComponents,
+        positionBufferType,
+        positionBufferNormalize,
+        positionBufferStride,
+        positionBufferOffset
     );
     gl.enableVertexAttribArray(attribLocations.vertexPosition);
+
+    // Tell WebGl how to pull out the colors from the color
+    // buffer into the vertexColor attribute.
+    const colorBufferNumComponents = 4;
+    const colorBufferType = gl.FLOAT;
+    const colorBufferNormalize = false;
+    const colorBufferStride = 0;
+    const colorBufferOffset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+    gl.vertexAttribPointer(
+        attribLocations.vertexColor,
+        colorBufferNumComponents,
+        colorBufferType,
+        colorBufferNormalize,
+        colorBufferStride,
+        colorBufferOffset
+    );
+    gl.enableVertexAttribArray(attribLocations.vertexColor);
 
     gl.useProgram(program);
 
