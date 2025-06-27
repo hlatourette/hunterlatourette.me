@@ -1,3 +1,5 @@
+import { vertexShaderSource, fragmentShaderSource, loadShader } from "./shaders.js";
+
 main();
 
 function main() {
@@ -12,28 +14,6 @@ function main() {
     // Set clear color and clear the color buffer
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // Define shaders
-    const vertexShaderSource = `
-        attribute vec4 aVertexPosition;
-        attribute vec4 aVertexColor;
-        uniform mat4 uModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
-        varying lowp vec4 vColor;
-
-        void main() {
-            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-            vColor = aVertexColor;
-        }
-    `;
-
-    const fragmentShaderSource = `
-        varying lowp vec4 vColor;
-
-        void main() {
-            gl_FragColor = vColor;
-        }
-    `;
 
     // Initialize shaders
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
@@ -89,13 +69,6 @@ function main() {
         },
         buffers
     );
-}
-
-function loadShader(gl, type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    return shader;
 }
 
 function draw(gl, program, attribLocations, uniformLocations, buffers) {
