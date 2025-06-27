@@ -26,5 +26,5 @@ function loadShader(gl, type, source) {
     return shader;
 }
 
-export {vertexShaderSource, fragmentShaderSource, loadShader};
+export { vertexShaderSource, fragmentShaderSource, loadShader };
 
