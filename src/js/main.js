@@ -1,9 +1,17 @@
+import { getWeather } from "./weather.js";
 import { vertexShaderSource, fragmentShaderSource, loadShader } from "./shaders.js";
 import { draw } from "./draw.js";
 
 main();
 
 function main() {
+    // Retrieve Data
+    // TODO: wrap in general async Promise.all getData()
+    // const weather = ...;
+    getWeather(40.7143, -74.006).then(weather => {
+        console.log(weather);
+    });
+
     // Initialize the GL context
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl2");
