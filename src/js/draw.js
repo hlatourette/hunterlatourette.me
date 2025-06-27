@@ -1,4 +1,4 @@
-function draw(gl, program, attribLocations, uniformLocations, buffers, squareRotation) {
+function draw(gl, program, attribLocations, uniformLocations, buffers, cubeRotation) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -24,11 +24,13 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, squareRot
     const modelViewMatrix = mat4.create();
     // Move the drawing position to where we want to draw the square.
     mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
-    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation, [0, 0, 1]);
+    mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation, [0, 0, 1]); // Axis to rotate around (Z)
+    mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation * 0.7, [0, 1, 0]); // Axis to rotate around (Y)
+    mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation * 0.3, [1, 0, 0]); // Axis to rotate around (X)
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition atrribute.
-    const positionBufferNumComponents = 2;
+    const positionBufferNumComponents = 3;
     const positionBufferType = gl.FLOAT;
     const positionBufferNormalize = false;
     const positionBufferStride = 0;
@@ -44,7 +46,7 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, squareRot
     );
     gl.enableVertexAttribArray(attribLocations.vertexPosition);
 
-    // Tell WebGl how to pull out the colors from the color
+    // Tell WebGL how to pull out the colors from the color
     // buffer into the vertexColor attribute.
     const colorBufferNumComponents = 4;
     const colorBufferType = gl.FLOAT;
@@ -62,12 +64,18 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, squareRot
     );
     gl.enableVertexAttribArray(attribLocations.vertexColor);
 
+    // Tell WebGL which indices to use to index the vertices
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
+
     gl.useProgram(program);
 
     gl.uniformMatrix4fv(uniformLocations.projectionMatrix, false, projectionMatrix);
     gl.uniformMatrix4fv(uniformLocations.modelViewMatrix, false, modelViewMatrix);
 
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    const drawVertexCount = 36;
+    const drawType = gl.UNSIGNED_SHORT;
+    const drawOffset = 0;
+    gl.drawElements(gl.TRIANGLES, drawVertexCount, drawType, drawOffset);
 }
 
 export { draw };
