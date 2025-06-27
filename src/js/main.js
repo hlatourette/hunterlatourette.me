@@ -56,19 +56,33 @@ function main() {
         color: colorBuffer
     };
 
-    // Draw
-    draw(
-        gl,
-        shaderProgram,
-        {
-            vertextPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor")
-        },
-        {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")
-        },
-        buffers
-    );
+    // Rendering loop
+    let squareRotation = 0.0;
+    let deltaTime = 0;
+    let then = 0;
+    function render(now) {
+        now *= 0.001; // convert to seconds
+        deltaTime = now - then;
+        then = now;
+        draw(
+            gl,
+            shaderProgram,
+            {
+                vertextPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+                vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor")
+            },
+            {
+                projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
+                modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")
+            },
+            buffers,
+            squareRotation
+        );
+
+        squareRotation += deltaTime;
+        requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
 }
 

@@ -1,4 +1,4 @@
-function draw(gl, program, attribLocations, uniformLocations, buffers) {
+function draw(gl, program, attribLocations, uniformLocations, buffers, squareRotation) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -24,7 +24,8 @@ function draw(gl, program, attribLocations, uniformLocations, buffers) {
     const modelViewMatrix = mat4.create();
     // Move the drawing position to where we want to draw the square.
     mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
-    
+    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation, [0, 0, 1]);
+
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition atrribute.
     const positionBufferNumComponents = 2;
