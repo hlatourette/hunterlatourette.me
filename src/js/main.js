@@ -5,9 +5,7 @@ import { draw } from "./draw.js";
 main();
 
 function main() {
-    // Retrieve Data
-    // TODO: wrap in general async Promise.all getData()
-    // const weather = ...;
+    // Load data
     getWeather(40.7143, -74.006).then(weather => {
         console.log(weather);
     });

@@ -3,11 +3,9 @@ async function getWeather(latitude, longitude) {
         temperature: 0.0,
         temperatureAparent: 0.0,
         relativeHumidity: 0,
-        precipitation: 0,
-        cloudCover: 0,
-        isDay: 0
+        precipitation: 0
     };
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,cloud_cover`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation`;
     try {
         const response = await fetch(url);
         if (!response.ok) {
