@@ -1,5 +1,6 @@
 import { getWeather } from "./weather.js";
 import { vertexShaderSource, fragmentShaderSource, loadShader } from "./shaders.js";
+import { loadTexture } from "./textures.js";
 import { draw } from "./draw.js";
 
 main();
@@ -41,6 +42,11 @@ function main() {
         return;
     }
 
+    // Initialize textures 
+    const texture = loadTexture(gl, "assets/duckdriftgtr.png");
+    // Flip image pixels into the bottom-to-top order that WebGL expects
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
     // Initialize buffers
     const positionBuffer = gl.createBuffer();
     const positions = [
@@ -54,35 +60,17 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    const colorBuffer = gl.createBuffer();
-    const colors = [
-        1.0, 1.0, 1.0, 1.0, // Front face: white
-        1.0, 1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0, 1.0,
-        1.0, 0.0, 0.0, 1.0, // Back face: red
-        1.0, 0.0, 0.0, 1.0,
-        1.0, 0.0, 0.0, 1.0,
-        1.0, 0.0, 0.0, 1.0,
-        0.0, 1.0, 0.0, 1.0, // Top face: green
-        0.0, 1.0, 0.0, 1.0,
-        0.0, 1.0, 0.0, 1.0,
-        0.0, 1.0, 0.0, 1.0,
-        0.0, 0.0, 1.0, 1.0, // Bottom face: blue
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
-        1.0, 1.0, 0.0, 1.0, // Right face: yellow
-        1.0, 1.0, 0.0, 1.0,
-        1.0, 1.0, 0.0, 1.0,
-        1.0, 1.0, 0.0, 1.0,
-        1.0, 0.0, 1.0, 1.0,  // Left face: purple
-        1.0, 0.0, 1.0, 1.0,
-        1.0, 0.0, 1.0, 1.0,
-        1.0, 0.0, 1.0, 1.0
+    const textureBuffer = gl.createBuffer();
+    const textureCoordinates = [
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // Front face
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // Back face
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // Top face
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // Bottom face
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // Right face
+        0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0  // Left face
     ];
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
 
     const indexBuffer = gl.createBuffer();
     const indices = [
@@ -98,7 +86,7 @@ function main() {
 
     const buffers = {
         position: positionBuffer,
-        color: colorBuffer,
+        texture: textureBuffer,
         indices: indexBuffer
     };
 
@@ -115,13 +103,15 @@ function main() {
             shaderProgram,
             {
                 vertextPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-                vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor")
+                textureCoordinate: gl.getAttribLocation(shaderProgram, "aTextureCoord")
             },
             {
                 projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
-                modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")
+                modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
+                uSampler: gl.getUniformLocation(shaderProgram, "uSampler")
             },
             buffers,
+            texture,
             cubeRotation
         );
 

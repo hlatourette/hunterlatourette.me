@@ -1,4 +1,4 @@
-function draw(gl, program, attribLocations, uniformLocations, buffers, cubeRotation) {
+function draw(gl, program, attribLocations, uniformLocations, buffers, texture, cubeRotation) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -30,39 +30,11 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, cubeRotat
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition atrribute.
-    const positionBufferNumComponents = 3;
-    const positionBufferType = gl.FLOAT;
-    const positionBufferNormalize = false;
-    const positionBufferStride = 0;
-    const positionBufferOffset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-    gl.vertexAttribPointer(
-        attribLocations.vertexPosition,
-        positionBufferNumComponents,
-        positionBufferType,
-        positionBufferNormalize,
-        positionBufferStride,
-        positionBufferOffset
-    );
-    gl.enableVertexAttribArray(attribLocations.vertexPosition);
+    setPositionAttribute(gl, buffers.position, attribLocations);
 
-    // Tell WebGL how to pull out the colors from the color
-    // buffer into the vertexColor attribute.
-    const colorBufferNumComponents = 4;
-    const colorBufferType = gl.FLOAT;
-    const colorBufferNormalize = false;
-    const colorBufferStride = 0;
-    const colorBufferOffset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
-    gl.vertexAttribPointer(
-        attribLocations.vertexColor,
-        colorBufferNumComponents,
-        colorBufferType,
-        colorBufferNormalize,
-        colorBufferStride,
-        colorBufferOffset
-    );
-    gl.enableVertexAttribArray(attribLocations.vertexColor);
+    // Tell WebGL how to pull out the texture coordinates from the
+    // buffer into the textureCoord attribute.
+    setTextureAttribute(gl, buffers.texture, attribLocations);
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
@@ -72,10 +44,51 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, cubeRotat
     gl.uniformMatrix4fv(uniformLocations.projectionMatrix, false, projectionMatrix);
     gl.uniformMatrix4fv(uniformLocations.modelViewMatrix, false, modelViewMatrix);
 
+    // Tell WebGL we want to affect texture unit 0
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.uniform1i(uniformLocations.uSampler, 0);
+
     const drawVertexCount = 36;
     const drawType = gl.UNSIGNED_SHORT;
     const drawOffset = 0;
     gl.drawElements(gl.TRIANGLES, drawVertexCount, drawType, drawOffset);
+}
+
+function setPositionAttribute(gl, positionBuffer, attribLocations) {
+    const num = 3;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.vertexAttribPointer(
+        attribLocations.vertextPosition,
+        num,
+        type,
+        normalize,
+        stride,
+        offset
+    );
+    gl.enableVertexAttribArray(attribLocations.vertexPosition);
+}
+
+function setTextureAttribute(gl, textureBuffer, attribLocations) {
+    const num = 2;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+    gl.vertexAttribPointer(
+        attribLocations.textureCoordinate,
+        num,
+        type,
+        normalize,
+        stride,
+        offset
+    );
+    gl.enableVertexAttribArray(attribLocations.textureCoordinate);
 }
 
 export { draw };
