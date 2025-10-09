@@ -37,7 +37,7 @@ function main() {
     }
 
     // Initialize textures 
-    const texture = loadTexture(gl, "assets/duckdriftgtr.png");
+    const texture = loadTexture(gl, "assets/arkansas_map.png");
     // Flip image pixels into the bottom-to-top order that WebGL expects
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
