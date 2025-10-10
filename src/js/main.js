@@ -109,7 +109,7 @@ function main() {
             gl,
             shaderProgram,
             {
-                vertextPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+                vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
                 vertexNormal: gl.getAttribLocation(shaderProgram, "aVertexNormal"),
                 textureCoordinate: gl.getAttribLocation(shaderProgram, "aTextureCoord")
             },

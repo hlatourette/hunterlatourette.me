@@ -71,7 +71,7 @@ function setPositionAttribute(gl, positionBuffer, attribLocations) {
     const offset = 0;
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.vertexAttribPointer(
-        attribLocations.vertextPosition,
+        attribLocations.vertexPosition,
         num,
         type,
         normalize,
