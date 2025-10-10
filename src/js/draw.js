@@ -28,6 +28,11 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, texture, 
     mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation * 0.7, [0, 1, 0]); // Axis to rotate around (Y)
     mat4.rotate(modelViewMatrix, modelViewMatrix, cubeRotation * 0.3, [1, 0, 0]); // Axis to rotate around (X)
 
+    // Transform normals
+    const normalMatrix = mat4.create();
+    mat4.invert(normalMatrix, modelViewMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
+
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition atrribute.
     setPositionAttribute(gl, buffers.position, attribLocations);
@@ -36,6 +41,8 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, texture, 
     // buffer into the textureCoord attribute.
     setTextureAttribute(gl, buffers.texture, attribLocations);
 
+    setNormalAttribute(gl, buffers.normal, attribLocations);
+
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
 
@@ -43,6 +50,7 @@ function draw(gl, program, attribLocations, uniformLocations, buffers, texture, 
 
     gl.uniformMatrix4fv(uniformLocations.projectionMatrix, false, projectionMatrix);
     gl.uniformMatrix4fv(uniformLocations.modelViewMatrix, false, modelViewMatrix);
+    gl.uniformMatrix4fv(uniformLocations.normalMatrix, false, normalMatrix);
 
     // Tell WebGL we want to affect texture unit 0
     gl.activeTexture(gl.TEXTURE0);
@@ -89,6 +97,24 @@ function setTextureAttribute(gl, textureBuffer, attribLocations) {
         offset
     );
     gl.enableVertexAttribArray(attribLocations.textureCoordinate);
+}
+
+function setNormalAttribute(gl, normalBuffer, attribLocations) {
+    const num = 3;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.vertexAttribPointer(
+        attribLocations.vertexNormal,
+        num,
+        type,
+        normalize,
+        stride,
+        offset
+    );
+    gl.enableVertexAttribArray(attribLocations.vertexNormal);
 }
 
 export { draw };

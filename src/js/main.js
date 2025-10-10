@@ -78,10 +78,23 @@ function main() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
+    const normalBuffer = gl.createBuffer();
+    const normals = [
+        0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,     // Front face
+        0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, // Back face
+        0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,     // Top face
+        0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, // Bottom face
+        1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,     // Right face
+        -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0  // Left face
+    ];
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+
     const buffers = {
         position: positionBuffer,
         texture: textureBuffer,
-        indices: indexBuffer
+        indices: indexBuffer,
+        normal: normalBuffer
     };
 
     // Rendering loop
@@ -97,11 +110,13 @@ function main() {
             shaderProgram,
             {
                 vertextPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+                vertexNormal: gl.getAttribLocation(shaderProgram, "aVertexNormal"),
                 textureCoordinate: gl.getAttribLocation(shaderProgram, "aTextureCoord")
             },
             {
                 projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
                 modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
+                normalMatrix: gl.getUniformLocation(shaderProgram, "uNormalMatrix"),
                 uSampler: gl.getUniformLocation(shaderProgram, "uSampler")
             },
             buffers,
