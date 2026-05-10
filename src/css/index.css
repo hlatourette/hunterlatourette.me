@@ -1,4 +1,6 @@
-body {
+:root { }
+
+html {
   font-family: "Courier New", "Lucida Console", monospace;
 }
 
@@ -11,25 +13,35 @@ body {
     width: 75%;
   }
 
-  .container-row {
-    h1 {
-      text-align: center;
-    }
+  .container-row { }
+}
 
-    h2 {
-      text-align: center;
-    }
-
-    ul {
-      list-style-position: inside;
-      list-style-type: none;
-      padding-left: 0;
-      text-align: center;
-    }
+.title {
+  h1 {
+    text-align: center;
   }
 }
 
-.container-canvas {
+.about {
+  h1 {
+    text-align: center;
+  }
+}
+
+.display {
   text-align: center;
+}
+
+.info {
+  h1 {
+    text-align: center;
+  }
+
+  ul {
+    list-style-position: inside;
+    list-style-type: none;
+    padding-left: 0;
+    text-align: center;
+  }
 }
 
